@@ -6,7 +6,7 @@ var app = builder.Build();
 var carOrders = new List<CarOrder>();
 
 // Root endpoint
-app.MapGet("/", () => "Car Ordering API - Use /api/cars for CRUD operations");
+app.MapGet("/", () => "Magnus dummy car ordering API...");
 
 // GET /api/cars - Get all car orders
 app.MapGet("/api/cars", () => carOrders)
