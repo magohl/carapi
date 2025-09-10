@@ -1,0 +1,10 @@
+apiVersion: automation.magnus.lan/v1alpha1
+kind: Car
+metadata:
+  name: toyota-camry-2
+  
+spec:
+  apiUrl: "https://carapi.soapfault.com"
+  make: "Toyota"
+  model: "Camry"
+  color: "Red"

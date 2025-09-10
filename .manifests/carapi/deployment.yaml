@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carapi
+  namespace: carapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: carapi
+  template:
+    metadata:
+      labels:
+        app: carapi
+    spec:
+      containers:
+      - name: carapi
+        image: ghcr.io/magohl/carapi:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 8000
+

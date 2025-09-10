@@ -1,0 +1,89 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: car-api
+  labels:
+    provider: http
+    service: car-api
+    version: v2
+spec:
+  compositeTypeRef:
+    apiVersion: automation.magnus.lan/v1alpha1
+    kind: Car
+  
+  mode: Pipeline
+  pipeline:
+  
+  - step: create-car-request
+    functionRef:
+      name: function-patch-and-transform
+    input:
+      apiVersion: pt.fn.crossplane.io/v1beta1
+      kind: Resources
+      resources:
+      - name: car-http-request
+        base:
+          apiVersion: http.crossplane.io/v1alpha2
+          kind: DisposableRequest
+          # No metadata.namespace for cluster-scoped resource
+          spec:
+            deletionPolicy: Delete
+            forProvider:
+              url: "https://carapi.soapfault.com/api/cars"
+              method: POST
+              headers:
+                Content-Type: 
+                - "application/json"
+                Accept:
+                - "application/json"
+              body: |
+                {
+                  "make": "Toyota",
+                  "model": "Camry",
+                  "color": "Blue"
+                }
+        patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.name
+          toFieldPath: metadata.name
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "%s-car-request"
+        
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.apiUrl
+          toFieldPath: spec.forProvider.url
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "%s/api/cars"
+        
+        - type: CombineFromComposite
+          combine:
+            variables:
+            - fromFieldPath: spec.make
+            - fromFieldPath: spec.model
+            - fromFieldPath: spec.color
+            strategy: string
+            string:
+              fmt: |
+                {
+                  "make": "%s",
+                  "model": "%s",
+                  "color": "%s"
+                }
+          toFieldPath: spec.forProvider.body
+        
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.response.body
+          toFieldPath: status.car
+          transforms:
+          - type: convert
+            convert:
+              toType: object
+              format: json
+          policy:
+            fromFieldPath: Optional

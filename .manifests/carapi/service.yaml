@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carapi-service
+  namespace: carapi
+spec:
+  ports:
+  - port: 8000
+  selector:
+    app: carapi
+  type: ClusterIP

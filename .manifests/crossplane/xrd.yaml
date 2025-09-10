@@ -1,0 +1,71 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: cars.automation.magnus.lan
+spec:
+  scope: Cluster  # Match the DisposableRequest scope
+  group: automation.magnus.lan
+  names:
+    kind: Car
+    plural: cars
+  defaultCompositionRef:
+    name: car-api
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              apiUrl:
+                type: string
+                description: "Base URL for the Car API"
+                default: "https://carapi.soapfault.com"
+              make:
+                type: string
+                description: "Car manufacturer"
+              model:
+                type: string
+                description: "Car model"
+              color:
+                type: string
+                description: "Car color"
+            required:
+            - make
+            - model
+            - color
+          status:
+            type: object
+            properties:
+              car:
+                type: object
+                description: "Complete car object from API"
+                properties:
+                  id:
+                    type: string
+                    description: "Unique car ID"
+                  make:
+                    type: string
+                  model:
+                    type: string
+                  color:
+                    type: string
+                  orderDate:
+                    type: string
+                    format: date-time
+                  expectedDeliveryDate:
+                    type: string
+                    format: date-time
+                  status:
+                    type: string
+                    description: "Order status (e.g., Pending, Processing, Delivered)"
+              carId:
+                type: string
+                description: "ID of the created car (convenience field)"
+              lastUpdated:
+                type: string
+                format: date-time
