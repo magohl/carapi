@@ -1,0 +1,38 @@
+name: Build and push
+
+on:
+  push:
+    tags:
+     - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+    - name: Test
+      run: |
+        echo $RELEASE_VERSION
+        echo ${{ env.RELEASE_VERSION }}
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push
+      run: |
+        docker build . -t ghcr.io/${{ github.repository_owner }}/carapi:${{ env.RELEASE_VERSION }} -t ghcr.io/${{ github.repository_owner }}/carapi:latest
+        docker push ghcr.io/${{ github.repository_owner }}/carapi:${{ env.RELEASE_VERSION }}
+        docker push ghcr.io/${{ github.repository_owner }}/carapi:latest
