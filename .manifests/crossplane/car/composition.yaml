@@ -1,3 +1,5 @@
+####### mo testing composition for a fake car order
+---
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -24,24 +26,44 @@ spec:
       - name: car-http-request
         base:
           apiVersion: http.crossplane.io/v1alpha2
-          kind: DisposableRequest
-          # No metadata.namespace for cluster-scoped resource
+          kind: Request
           spec:
             deletionPolicy: Delete
             forProvider:
-              url: "https://carapi.soapfault.com/api/cars"
-              method: POST
-              headers:
-                Content-Type: 
-                - "application/json"
-                Accept:
-                - "application/json"
-              body: |
-                {
-                  "make": "Toyota",
-                  "model": "Camry",
-                  "color": "Blue"
-                }
+              payload:
+                baseUrl: http://carapi-service.carapi.svc.cluster.local:8000 #"https://carapi.soapfault.com"
+                body: |
+                  {
+                    "make": "Toyota",
+                    "model": "Camry",
+                    "color": "Blue"
+                  }
+
+              # order matters!
+              mappings:
+              - method: "POST"
+                url: .payload.baseUrl + "/api/cars"
+                body: .payload.body
+                headers:
+                  Content-Type: 
+                  - "application/json"
+
+              - method: "GET"
+                url: (.payload.baseUrl + "/api/cars/" + (.response.body.id|tostring))
+                headers:
+                  Accept:
+                  - "application/json"
+
+              - method: "PUT"
+                url: (.payload.baseUrl + "/api/cars/" + (.response.body.id|tostring))
+                body: .payload.body
+                headers:
+                  Content-Type: 
+                  - "application/json"
+
+              - method: "DELETE" 
+                url: (.payload.baseUrl + "/api/cars/" + (.response.body.id|tostring))
+
         patches:
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.name
@@ -54,12 +76,7 @@ spec:
         
         - type: FromCompositeFieldPath
           fromFieldPath: spec.apiUrl
-          toFieldPath: spec.forProvider.url
-          transforms:
-          - type: string
-            string:
-              type: Format
-              fmt: "%s/api/cars"
+          toFieldPath: spec.forProvider.payload.baseUrl
         
         - type: CombineFromComposite
           combine:
@@ -75,7 +92,7 @@ spec:
                   "model": "%s",
                   "color": "%s"
                 }
-          toFieldPath: spec.forProvider.body
+          toFieldPath: spec.forProvider.payload.body
         
         - type: ToCompositeFieldPath
           fromFieldPath: status.response.body
