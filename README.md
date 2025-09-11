@@ -2,7 +2,7 @@
 docker run -it --rm -p 8000:8000 ghcr.io/magohl/carapi:latest
 ```
 
-# prereqs
+# prereqs cli tools
 
 - kubectl
 - kind
@@ -39,7 +39,6 @@ kubectl apply -f .manifests/crossplane/car/test/some-car.yaml
 kubectl run -it --rm=true --image=quay.io/curl/curl:latest curl -- /bin/sh
 curl -Lk -X GET http://carapi-service.carapi.svc.cluster.local:8000/api/cars
 curl -Lk -X DELETE http://carapi-service.carapi.svc.cluster.local:8000/api/cars/...
-
 ```
 
 ## runbook
