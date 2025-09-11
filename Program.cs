@@ -5,6 +5,13 @@ var app = builder.Build();
 
 var carOrders = new List<CarOrder>();
 
+var inventory = new Tuple<string, List<string>>[]
+{
+    new("Toyota", ["Camry", "Corolla", "RAV4", "Highlander", "Prius"]),
+    new("BMW", ["3 Series", "5 Series", "X3", "X5", "M3"])
+};
+
+
 // Root endpoint
 app.MapGet("/", () => "Magnus dummy car ordering API...");
 
