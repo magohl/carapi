@@ -31,7 +31,7 @@ spec:
             deletionPolicy: Delete
             forProvider:
               payload:
-                baseUrl: http://carapi-service.carapi.svc.cluster.local:8000 #"https://carapi.soapfault.com"
+                baseUrl: "https://carapi.soapfault.com"
                 body: |
                   {
                     "make": "Toyota",

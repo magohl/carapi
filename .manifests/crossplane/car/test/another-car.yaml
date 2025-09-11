@@ -1,9 +1,9 @@
 apiVersion: automation.magnus.lan/v1alpha1
 kind: Car
 metadata:
-  name: toyota-highlander-black
+  name: toyota-pius-purple
 spec:
-  apiUrl: "https://carapi.soapfault.com"
+  apiUrl: "http://carapi-service.carapi.svc.cluster.local:8000" #"https://carapi.soapfault.com"
   make: "Toyota"
-  model: "Highlander"
-  color: "Black"
+  model: "Prius"
+  color: "Purple"
