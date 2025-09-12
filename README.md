@@ -9,7 +9,7 @@ docker run -it --rm -p 8000:8000 ghcr.io/magohl/carapi:latest
 - helm
 
 ```bash
-# create cluster
+# create new empty kubernetes cluster
 kind create cluster
 
 # install crossplane in cluster
@@ -19,12 +19,12 @@ helm install crossplane \
 --namespace crossplane-system \
 --create-namespace crossplane-stable/crossplane
 
-# install crossplane provider for http
+# install crossplane provider for 'http'
 kubectl apply -f .manifests/crossplane/providers/provider.yaml
 kubectl apply -f .manifests/crossplane/providers/functions.yaml
 kubectl apply -f .manifests/crossplane/providers/providerconfig.yaml
 
-# install our custom crossplane resource 'Car'
+# install our custom crossplane resource 'Car' which uses a composition with the http provider
 kubectl apply -f .manifests/crossplane/car/.
 
 # deploy the api (if not hosted elsewhere)
