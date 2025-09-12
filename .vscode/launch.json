@@ -6,7 +6,7 @@
             "request": "launch",
             "preLaunchTask": "docker-run: debug",
             "netCore": {
-                "appProject": "${workspaceFolder}/carapi.csproj"
+                "appProject": "${workspaceFolder}/src/carapi.csproj"
             }
         }
     ]

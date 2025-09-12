@@ -24,14 +24,14 @@ kubectl apply -f .manifests/crossplane/providers/provider.yaml
 kubectl apply -f .manifests/crossplane/providers/functions.yaml
 kubectl apply -f .manifests/crossplane/providers/providerconfig.yaml
 
-# install our custom crossplane resource
+# install our custom crossplane resource 'Car'
 kubectl apply -f .manifests/crossplane/car/.
 
 # deploy the api (if not hosted elsewhere)
 kubectl create namespace carapi
 kubectl apply -f .manifests/carapi/.
 
-# place an order for a new car. But check the api first to compare!
+# place an order for a new car. But check the api first to see it change!
 kubectl apply -f .manifests/crossplane/car/test/some-car.yaml
 ```
 

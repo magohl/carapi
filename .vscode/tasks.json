@@ -10,12 +10,12 @@
 			"dockerBuild": {
 				"tag": "carapi:dev",
 				"target": "base",
-				"dockerfile": "${workspaceFolder}/Dockerfile",
+				"dockerfile": "${workspaceFolder}/src/Dockerfile",
 				"context": "${workspaceFolder}",
 				"pull": true
 			},
 			"netCore": {
-				"appProject": "${workspaceFolder}/carapi.csproj"
+				"appProject": "${workspaceFolder}/src/carapi.csproj"
 			}
 		},
 		{
@@ -26,8 +26,8 @@
 			],
 			"dockerBuild": {
 				"tag": "carapi:latest",
-				"dockerfile": "${workspaceFolder}/Dockerfile",
-				"context": "${workspaceFolder}",
+				"dockerfile": "${workspaceFolder}/src/Dockerfile",
+				"context": "${workspaceFolder}/src",
 				"platform": {
 					"os": "linux",
 					"architecture": "amd64"
@@ -35,7 +35,7 @@
 				"pull": true
 			},
 			"netCore": {
-				"appProject": "${workspaceFolder}/carapi.csproj"
+				"appProject": "${workspaceFolder}/src/carapi.csproj"
 			}
 		},
 		{
@@ -46,7 +46,7 @@
 			],
 			"dockerRun": {},
 			"netCore": {
-				"appProject": "${workspaceFolder}/carapi.csproj",
+				"appProject": "${workspaceFolder}/src/carapi.csproj",
 				"enableDebugging": true
 			}
 		},
@@ -58,7 +58,7 @@
 			],
 			"dockerRun": {},
 			"netCore": {
-				"appProject": "${workspaceFolder}/carapi.csproj"
+				"appProject": "${workspaceFolder}/src/carapi.csproj"
 			}
 		}
 	]

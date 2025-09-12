@@ -38,6 +38,6 @@ jobs:
 
     - name: Build and push
       run: |
-        docker build . -t ghcr.io/${{ github.repository_owner }}/carapi:${{ env.RELEASE_VERSION }} -t ghcr.io/${{ github.repository_owner }}/carapi:latest
+        docker build src -t ghcr.io/${{ github.repository_owner }}/carapi:${{ env.RELEASE_VERSION }} -t ghcr.io/${{ github.repository_owner }}/carapi:latest
         docker push ghcr.io/${{ github.repository_owner }}/carapi:${{ env.RELEASE_VERSION }}
         docker push ghcr.io/${{ github.repository_owner }}/carapi:latest
