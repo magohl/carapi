@@ -5,33 +5,44 @@ var app = builder.Build();
 
 var carOrders = new List<CarOrder>();
 
-var inventory = new Tuple<string, List<string>>[]
+var inventory = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
 {
-    new("Toyota", ["Camry", "Corolla", "RAV4", "Highlander", "Prius"]),
-    new("BMW", ["3 Series", "5 Series", "X3", "X5", "M3"])
+    { "Toyota", ["Camry", "Corolla", "RAV4", "Highlander", "Prius"] },
+    { "BMW", ["3 Series", "5 Series", "X3", "X5", "M3"] }
 };
 
+var colors = new List<string> { "Black", "White", "Red", "Purple" };
+
+bool IsCarAvailableInInventory(string make, string model, string color)
+{
+    return inventory.ContainsKey(make)
+        && inventory[make].Any(model => model.Equals(model, StringComparison.OrdinalIgnoreCase))
+        && colors.Contains(color, StringComparer.OrdinalIgnoreCase);
+}
 
 // Root endpoint
 app.MapGet("/", () => "Magnus dummy car ordering API...");
 
 // GET /api/cars - Get all car orders
-app.MapGet("/api/cars", () => carOrders)
-   .WithName("GetAllCarOrders")
-   .WithTags("Cars");
+app.MapGet("/api/cars", () => carOrders);
 
 // GET /api/cars/{id} - Get specific car order by ID
 app.MapGet("/api/cars/{id:guid}", (Guid id) =>
 {
     var order = carOrders.FirstOrDefault(c => c.Id == id);
-    return order is not null ? Results.Ok(order) : Results.NotFound($"Car order with ID {id} not found");
-})
-.WithName("GetCarOrderById")
-.WithTags("Cars");
+    return order is not null
+        ? Results.Ok(order)
+            : Results.NotFound($"Car order with ID {id} not found");
+});
 
 // POST /api/cars - Create new car order
 app.MapPost("/api/cars", (CreateCarOrderRequest request) =>
 {
+    if (!IsCarAvailableInInventory(request.Make, request.Model, request.Color))
+    {
+        return Results.BadRequest($"Car '{request.Make} {request.Model} {request.Color}' is not available");
+    }
+
     var expectedDeliveryDate = DateTime
         .UtcNow.AddMonths(6)
         .AddDays(new Random().Next(-100, 101));
@@ -49,9 +60,7 @@ app.MapPost("/api/cars", (CreateCarOrderRequest request) =>
     carOrders.Add(newOrder);
 
     return Results.Created($"/api/cars/{newOrder.Id}", newOrder);
-})
-.WithName("CreateCarOrder")
-.WithTags("Cars");
+});
 
 // PUT /api/cars/{id} - Update existing car order
 app.MapPut("/api/cars/{id:guid}", (Guid id, UpdateCarOrderRequest request) =>
@@ -60,6 +69,15 @@ app.MapPut("/api/cars/{id:guid}", (Guid id, UpdateCarOrderRequest request) =>
     if (existingOrder is null)
     {
         return Results.NotFound($"Car order with ID {id} not found");
+    }
+
+    var newMake = request.Make ?? existingOrder.Make;
+    var newModel = request.Model ?? existingOrder.Model;
+    var newColor = request.Color ?? existingOrder.Color;
+
+    if (!IsCarAvailableInInventory(newMake, newModel, newColor))
+    {
+        return Results.BadRequest($"Car '{newMake} {newModel} {newColor}' is not available");
     }
 
     var updatedOrder = existingOrder with
@@ -74,9 +92,7 @@ app.MapPut("/api/cars/{id:guid}", (Guid id, UpdateCarOrderRequest request) =>
     carOrders[index] = updatedOrder;
 
     return Results.Ok(updatedOrder);
-})
-.WithName("UpdateCarOrder")
-.WithTags("Cars");
+});
 
 // DELETE /api/cars/{id} - Delete car order
 app.MapDelete("/api/cars/{id:guid}", (Guid id) =>
@@ -89,45 +105,26 @@ app.MapDelete("/api/cars/{id:guid}", (Guid id) =>
 
     carOrders.Remove(order);
     return Results.NoContent();
-})
-.WithName("DeleteCarOrder")
-.WithTags("Cars");
+});
 
 // GET /api/cars/makes - Get available car makes
-app.MapGet("/api/cars/makes", () => new[]
-{
-    "Toyota", "BMW"
-})
-.WithName("GetAvailableMakes")
-.WithTags("Cars");
+app.MapGet("/api/cars/makes", () => inventory.Keys.ToArray());
 
 // GET /api/cars/models/{make} - Get models for a specific make
 app.MapGet("/api/cars/models/{make}", (string make) =>
 {
-    var models = make.ToLower() switch
+    if (inventory.TryGetValue(make, out var models))
     {
-        "toyota" => new[] { "Camry", "Corolla", "RAV4", "Highlander", "Prius" },
-        "bmw" => new[] { "3 Series", "5 Series", "X3", "X5", "M3" },
-        _ => null
-    };
+        return Results.Ok(models.ToArray());
+    }
 
-    return models is not null ?
-        Results.Ok(models)
-            : Results.NotFound($"No models found for make '{make}'");
-})
-.WithName("GetModelsForMake")
-.WithTags("Cars");
+    return Results.NotFound($"No models found for make '{make}'");
+});
 
 // GET /api/cars/colors - Get available colors
-app.MapGet("/api/cars/colors", () => new[]
-{
-    "Black", "White", "Red", "Purple"
-})
-.WithName("GetAvailableColors")
-.WithTags("Cars");
+app.MapGet("/api/cars/colors", () => colors);
 
 app.Run();
-
 
 // Models
 record Car(string Make, string Model, string Color);

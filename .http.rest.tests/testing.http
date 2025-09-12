@@ -1,5 +1,5 @@
-@URL=https://carapi.soapfault.com
-#@URL=http://localhost:32773
+#@URL=https://carapi.soapfault.com
+@URL=http://localhost:5100
 
 ### Get all car orders
 GET {{URL}}/api/cars
@@ -10,9 +10,19 @@ POST {{URL}}/api/cars
 Content-Type: application/json
 
 {
+  "make": "toyota",
+  "model": "camry",
+  "color": "Red"
+}
+
+### change
+PUT {{URL}}/api/cars/{{create.response.body.id}}
+Content-Type: application/json
+
+{
   "make": "Toyota",
   "model": "Camry",
-  "color": "Blue"
+  "color": "Black"
 }
 
 ### Get specific car order
