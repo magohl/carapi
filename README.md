@@ -26,6 +26,7 @@ kubectl apply -f .manifests/crossplane/providers/providerconfig.yaml
 
 # install our custom crossplane resource 'Car' which uses a composition with the http provider
 kubectl apply -f .manifests/crossplane/car/.
+kubectl get cars  #prove - we now have a resource type called car but there are no cars deployed
 
 # deploy the api (if not hosted elsewhere)
 kubectl create namespace carapi
