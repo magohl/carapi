@@ -32,7 +32,7 @@ curl -Lk -X DELETE http://carapi-service.carapi.svc.cluster.local:8000/api/cars/
 
 # install crossplane in cluster
 
-helm repo add crossplane-stable https://charts.crossplane.io/stable
+(helm repo add crossplane-stable https://charts.crossplane.io/stable)
 helm repo update
 helm install crossplane \
 --namespace crossplane-system \
