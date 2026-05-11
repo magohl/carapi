@@ -5,7 +5,7 @@ metadata:
   name: carapi
   namespace: carapi
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: carapi

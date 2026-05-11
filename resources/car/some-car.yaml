@@ -6,4 +6,4 @@ spec:
   apiUrl: "http://carapi-service.carapi.svc.cluster.local:8000" #"https://carapi.soapfault.com"
   make: "Toyota"
   model: "Prius"
-  color: "Purple"
+  color: "Red"

@@ -1,9 +1,0 @@
-# note that this can not be installed until the provider http.crossplane.io is installed.
----
-apiVersion: http.crossplane.io/v1alpha1
-kind: ProviderConfig
-metadata:
-  name: default
-spec:
-  credentials:
-    source: None
