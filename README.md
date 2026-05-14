@@ -39,7 +39,7 @@ helm install crossplane \
 --create-namespace crossplane-stable/crossplane
 
 # install crossplane provider for 'http'
-kubectl apply -f .manifests/crossplane/providers/provider.yaml
+kubectl apply -f 0-infra/crossplane/providers/azure/provider.yaml
 kubectl apply -f .manifests/crossplane/providers/functions.yaml
 kubectl apply -f .manifests/crossplane/providers/providerconfig.yaml
 
